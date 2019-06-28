@@ -1,8 +1,8 @@
 <template>
   <v-container fluid grid-list-md fill-height>
     <v-layout align-center justify-center row fill-height>
-      <CardSeriesMovies />
-      <CardSeriesMovies />
+      <CardSeriesMovies type="movies" />
+      <CardSeriesMovies type="series" />
     </v-layout>
   </v-container>
 </template>
