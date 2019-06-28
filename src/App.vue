@@ -22,19 +22,13 @@
     </v-navigation-drawer>
     <v-toolbar app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title>Video World</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <v-flex shrink>
-            <router-view></router-view>
-          </v-flex>
-        </v-layout>
-      </v-container>
+      <router-view></router-view>
     </v-content>
     <v-footer app fixed>
-      <span>&copy; 2017</span>
+      <span>&copy; 2019</span>
     </v-footer>
   </v-app>
 </template>

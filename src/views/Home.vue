@@ -1,13 +1,18 @@
 <template>
-  <HelloWorld />
+  <v-container fluid grid-list-md fill-height>
+    <v-layout align-center justify-center row fill-height>
+      <CardSeriesMovies />
+      <CardSeriesMovies />
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
-import HelloWorld from '../components/HelloWorld'
+import CardSeriesMovies from '../components/CardSeriesMovies'
 
 export default {
   components: {
-    HelloWorld
+    CardSeriesMovies
   }
 }
 </script>
