@@ -1,18 +1,18 @@
 <template>
   <v-container fluid grid-list-md fill-height>
     <v-layout align-center justify-center row fill-height>
-      <CardSeriesMovies type="movies" />
-      <CardSeriesMovies type="series" />
+      <CardSeriesMoviesHome type="movies" />
+      <CardSeriesMoviesHome type="series" />
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import CardSeriesMovies from '../components/CardSeriesMovies'
+import CardSeriesMoviesHome from '../components/CardSeriesMoviesHome'
 
 export default {
   components: {
-    CardSeriesMovies
+    CardSeriesMoviesHome
   }
 }
 </script>

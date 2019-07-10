@@ -8,7 +8,7 @@
         </div>
       </v-card-title>
     </v-card>
-    <v-card v-else to="/series">
+    <v-card v-else to="/shows">
       <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
       <v-card-title primary-title class="justify-center">
         <div>
