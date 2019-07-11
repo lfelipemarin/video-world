@@ -58,7 +58,7 @@ export default {
     this.getShowDetails('en-US', this.id)
     setTimeout(() => {
       this.backdropImage = config.imgApiConfig.baseUrl + 'original' + this.details.backdrop_path
-    }, 100);
+    }, 300);
   },
   mounted () {
   },
