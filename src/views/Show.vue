@@ -1,14 +1,35 @@
 <template>
-  <v-container fluid grid-list-md fill-height>
-    <v-layout justify-start row wrap fill-height>
-      <v-flex xs6 sm4 md2 v-for="show in shows.results" v-bind:key="show.id">
-        <CardSeriesMoviesGrid type="series" :mediadata="show" />
-      </v-flex>
-      <v-flex xs12 text-sm-center>
-        <v-pagination v-model="shows.page" :length="shows.total_pages" :total-visible="5"
-                      @input="getPopularShows('en-us',shows.page)" @next="getPopularShows('en-us',shows.page)"
-                      @previous="getPopularShows('en-us',shows.page)">
-        </v-pagination>
+  <v-container fluid>
+    <v-layout justify-start row wrap>
+      <v-flex xs12>
+        <v-tabs v-model="model" centered color="cyan" slider-color="yellow">
+          <v-tab to="#overview">
+            Overview
+          </v-tab>
+          <v-tab v-for="season in details.seasons" :key="season.id" :to="`#${standardizeSeasonName(season.name)}`">
+            {{ season.name }}
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="model">
+          <v-tab-item value="overview">
+            <v-card flat>
+              <v-img :src="backdropImage" aspect-ratio="3.75"></v-img>
+              <v-card-text>{{details.overview}}</v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item v-for="season in details.seasons" :key="season.id" :value="standardizeSeasonName(season.name)">
+            <v-card flat>
+              <v-layout row wrap>
+                <v-flex xs3>
+                  <v-img :src="imagePath(season.poster_path)" aspect-ratio=".7" width="300px" contain></v-img>
+                </v-flex>
+                <v-flex xs9>
+                  <v-card-text>{{ season.overview }}</v-card-text>
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
       </v-flex>
     </v-layout>
   </v-container>
@@ -16,29 +37,59 @@
 
 <script>
 import tmdbService from '../services/tmdbService'
-import CardSeriesMoviesGrid from '../components/CardSeriesMoviesGrid'
+import config from '../conf'
+import _ from 'lodash'
+
 export default {
   components: {
-    CardSeriesMoviesGrid
+
   },
   data: () => ({
-    shows: {}
+    id: 0,
+    model: 'overview',
+    details: {},
+    backdropImage: '',
+    active: null,
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.'
+
   }),
-  mounted: function () {
-    this.getPopularShows('en-us', 1)
+  created () {
+    this.id = this.$route.params.id
+    this.getShowDetails('en-US', this.id)
+    setTimeout(() => {
+      this.backdropImage = config.imgApiConfig.baseUrl + 'original' + this.details.backdrop_path
+    }, 100);
+  },
+  mounted () {
   },
   methods: {
-    getPopularShows (lang, page) {
-      tmdbService.getPopularShows(lang, page)
+    getShowDetails (lang, id) {
+      tmdbService.getShowDetails(lang, id)
         .then((response) => {
           // handle success
-          this.shows = response.data
+          this.details = response.data
         })
         .catch(function (error) {
           // handle error
           console.log(error)
         })
+    },
+    imagePath (posterPath) {
+      return config.imgApiConfig.baseUrl + 'original' + posterPath
+    },
+    standardizeSeasonName (season) {
+      return _.replace(season, / /g, '-')
     }
+
+  },
+  computed: {
+    // imagePath: function (posterPath) {
+    //   return config.imgApiConfig.baseUrl + 'w500' + posterPath
+    // }
+    // toRoute: function () {
+    //   let dynamic = _.replace(this.mediadata.name, / /g, '-')
+    //   return '/shows/' + this.mediadata.id + '/' + _.toLower(dynamic)
+    // }
   }
 }
 </script>
