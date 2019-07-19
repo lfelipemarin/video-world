@@ -10,5 +10,9 @@ export default {
         return axios.get(config.apiConfig.baseUrl + 'tv/' + id + '?api_key=' +
             config.apiConfig.apiKey + '&language=' + language)
     },
+    getShowSeasons (id, seasonNumber, language) {
+        return axios.get(config.apiConfig.baseUrl + 'tv/' + id + '/season/' + seasonNumber + '?api_key=' +
+            config.apiConfig.apiKey + '&language=' + language)
+    }
 
 }
