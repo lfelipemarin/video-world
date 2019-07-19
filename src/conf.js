@@ -5,5 +5,8 @@ export default {
     },
     imgApiConfig: {
         baseUrl: '//image.tmdb.org/t/p/'
+    },
+    mediaApiConfig:{
+        baseUrlShow: '//user.gomostream.com/show/'
     }
 }

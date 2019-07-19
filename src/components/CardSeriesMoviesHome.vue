@@ -4,7 +4,7 @@
       <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
       <v-card-title primary-title class="justify-center">
         <div>
-          <h3 class="headline mb-0">{{type}}</h3>
+          <h3 class="headline mb-0">Movies</h3>
         </div>
       </v-card-title>
     </v-card>
@@ -12,7 +12,7 @@
       <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
       <v-card-title primary-title class="justify-center">
         <div>
-          <h3 class="headline mb-0">{{type}}</h3>
+          <h3 class="headline mb-0">TV Shows</h3>
         </div>
       </v-card-title>
     </v-card>

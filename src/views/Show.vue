@@ -13,35 +13,36 @@
         <v-tabs-items v-model="model">
           <v-tab-item value="overview">
             <v-card flat>
-              <v-img :src="backdropImage" aspect-ratio="3.75"></v-img>
+              <v-img v-if="backdropImage" :src="backdropImage" aspect-ratio="3.75"></v-img>
               <v-card-text>{{details.overview}}</v-card-text>
             </v-card>
           </v-tab-item>
           <v-tab-item v-for="season in seasons" :key="season.id" :value="`season-${season.season_number}`">
             <v-card flat>
               <v-layout row wrap>
-                <v-flex xs12 sm6 md3>
+                <v-flex v-show="season.poster_path" xs12 sm6 md3>
                   <v-img :src="imagePath(season.poster_path)" aspect-ratio=".7" contain></v-img>
+                  <v-card-text>{{ season.overview }}</v-card-text>
                 </v-flex>
                 <v-flex xs12 sm6 md9>
-                  <v-card-text>{{ season.overview }}</v-card-text>
                   <v-container grid-list-sm>
                     <v-layout row wrap>
                       <v-flex xs12 sm6 md3 v-for="episode in season.episodes" :key="episode.id" justify-space-around
                               align-space-around>
                         <v-card>
-                          <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px">
+                          <v-img v-show="episode.still_path" :src="imagePath(episode.still_path)" height="200px">
                           </v-img>
-
                           <v-card-title primary-title>
-                            <div>
-                              <div class="headline">Top western road trips</div>
-                              <span class="grey--text">1,000 miles of wonder</span>
+                            <div id="title-link">
+                              <div class="headline" @click.stop="dialog = true"
+                                   @click="goToMediaLink(details.name,season.season_number,episode.episode_number)">
+                                {{episode.name}}</div>
+                              <span class="grey--text">Air date: {{episode.air_date}}</span>
                             </div>
                           </v-card-title>
                           <v-card-actions>
-                            <v-btn flat>Share</v-btn>
-                            <v-btn flat color="purple">Explore</v-btn>
+                            <!-- <v-btn flat>Share</v-btn>
+                            <v-btn flat color="purple">Explore</v-btn> -->
                             <v-spacer></v-spacer>
                             <v-btn icon @click="showDescription(episode)">
                               <v-icon>{{ episode.show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
@@ -50,14 +51,7 @@
                           </v-card-actions>
                           <v-slide-y-transition>
                             <v-card-text v-show="episode.show">
-                              I'm a thing. But, like most politicians, he promised more than he could deliver. You won't
-                              have
-                              time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go
-                              with
-                              that
-                              data file! Hey, you add a one and two zeros to that or we walk! You're going to do his
-                              laundry?
-                              I've got to find a way to escape.
+                              {{episode.overview}}
                             </v-card-text>
                           </v-slide-y-transition>
                         </v-card>
@@ -70,6 +64,22 @@
           </v-tab-item>
         </v-tabs-items>
       </v-flex>
+      <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-card>
+          <v-toolbar dark color="primary">
+            <v-btn icon dark @click="closeIframe()">
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn dark flat @click="dialog = false">Save</v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+          <iframe id="media-iframe" height="100%" width="100%" :src="mediaLink" name="iframe_media"
+                  sandbox="allow-same-origin allow-scripts" allowfullscreen @load="iframeLoad"></iframe>
+        </v-card>
+      </v-dialog>
     </v-layout>
   </v-container>
 </template>
@@ -89,8 +99,9 @@ export default {
     details: {},
     backdropImage: '',
     active: null,
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.',
     seasons: [],
+    dialog: false,
+    mediaLink: ''
   }),
   created () {
     this.id = this.$route.params.id
@@ -100,7 +111,7 @@ export default {
     setTimeout(() => {
       this.backdropImage = config.imgApiConfig.baseUrl + 'original' + this.details.backdrop_path
       this.model = _.replace(this.$route.hash, '#', '')
-    }, 300)
+    }, 500)
   },
   methods: {
     getShowDetails (lang, id) {
@@ -129,12 +140,28 @@ export default {
       })
     },
     imagePath (posterPath) {
-      return config.imgApiConfig.baseUrl + 'original' + posterPath
+      return posterPath ? config.imgApiConfig.baseUrl + 'original' + posterPath : ''
     },
-    //Todo implement force update
     showDescription (episode) {
       episode.show = !episode.show
       this.$forceUpdate()
+    },
+    goToMediaLink (showName, seasonNumber, showNumber) {
+      showName = _.replace(showName, / /g, '-')
+      seasonNumber = String(seasonNumber).padStart(2, 0)
+      showNumber = String(showNumber).padStart(2, 0)
+      this.mediaLink = config.mediaApiConfig.baseUrlShow + showName + '/' + seasonNumber + '-' + showNumber
+    },
+    closeIframe () {
+      this.dialog = false
+      this.mediaLink = ''
+    },
+    iframeLoad (){
+      alert('iframe loaded')
+      let mediaIframe = document.getElementById('media-iframe')
+      let innerDoc = mediaIframe.contentDocument || mediaIframe.contentWindow.document
+      let innerIframe = innerDoc.getElementById('openloadIframe')
+      console.log(innerIframe)
     }
   },
   computed: {
@@ -158,3 +185,20 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+iframe {
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 64px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+#title-link {
+  cursor: pointer;
+}
+</style>
