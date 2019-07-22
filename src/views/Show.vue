@@ -35,7 +35,7 @@
                           <v-card-title primary-title>
                             <div id="title-link">
                               <div class="headline" @click.stop="dialog = true"
-                                   @click="goToMediaLink(details.name,season.season_number,episode.episode_number)">
+                                   @click="goToMediaLink(details.name,season.season_number,episode.episode_number,season,episode)">
                                 {{episode.name}}</div>
                               <span class="grey--text">Air date: {{episode.air_date}}</span>
                             </div>
@@ -70,14 +70,14 @@
             <v-btn icon dark @click="closeIframe()">
               <v-icon>close</v-icon>
             </v-btn>
-            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-toolbar-title>{{modalTitle}}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn dark flat @click="dialog = false">Save</v-btn>
+              <v-btn dark flat @click="dialog = false">Close</v-btn>
             </v-toolbar-items>
           </v-toolbar>
           <iframe id="media-iframe" height="100%" width="100%" :src="mediaLink" name="iframe_media"
-                  sandbox="allow-same-origin allow-scripts" allowfullscreen @load="iframeLoad"></iframe>
+                  allowfullscreen></iframe>
         </v-card>
       </v-dialog>
     </v-layout>
@@ -101,7 +101,9 @@ export default {
     active: null,
     seasons: [],
     dialog: false,
-    mediaLink: ''
+    mediaLink: '',
+    episodeInfo: {},
+    seasonInfo: {}
   }),
   created () {
     this.id = this.$route.params.id
@@ -146,8 +148,13 @@ export default {
       episode.show = !episode.show
       this.$forceUpdate()
     },
-    goToMediaLink (showName, seasonNumber, showNumber) {
-      showName = _.replace(showName, / /g, '-')
+    goToMediaLink (showName, seasonNumber, showNumber, season, episode) {
+      this.seasonInfo = season
+      this.episodeInfo = episode
+      // Replace weird characters for '-'
+      showName = _.replace(showName, /[ '.;]/g, '-')
+      // Replace weird characters at the end for ''
+      showName = _.replace(showName, /(-|\.|\?)$/g, '')
       seasonNumber = String(seasonNumber).padStart(2, 0)
       showNumber = String(showNumber).padStart(2, 0)
       this.mediaLink = config.mediaApiConfig.baseUrlShow + showName + '/' + seasonNumber + '-' + showNumber
@@ -155,16 +162,14 @@ export default {
     closeIframe () {
       this.dialog = false
       this.mediaLink = ''
-    },
-    iframeLoad (){
-      alert('iframe loaded')
-      let mediaIframe = document.getElementById('media-iframe')
-      let innerDoc = mediaIframe.contentDocument || mediaIframe.contentWindow.document
-      let innerIframe = innerDoc.getElementById('openloadIframe')
-      console.log(innerIframe)
     }
   },
   computed: {
+    modalTitle: function () {
+      let seasonNumber = String(this.seasonInfo.season_number).padStart(2, 0)
+      let showNumber = String(this.episodeInfo.episode_number).padStart(2, 0)
+      return this.details.name + ' ' + seasonNumber + 'x' + showNumber + ' ' + this.episodeInfo.name
+    }
     // imagePath: function (posterPath) {
     //   return config.imgApiConfig.baseUrl + 'w500' + posterPath
     // }

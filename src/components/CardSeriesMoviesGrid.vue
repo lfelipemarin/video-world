@@ -30,10 +30,11 @@ export default {
   },
   computed: {
     imagePath: function () {
-      return config.imgApiConfig.baseUrl + 'w500' + this.mediadata.poster_path
+      return config.imgApiConfig.baseUrl + 'original' + this.mediadata.poster_path
     },
     toRoute: function () {
-      let dynamic = _.replace(this.mediadata.name, / /g, '-')
+      let dynamic = _.replace(this.mediadata.name, /[ '.]/g, '-')
+      dynamic = _.replace(dynamic, /(-|\.|\?)$/g, '')
       return '/shows/' + this.mediadata.id + '/' + _.toLower(dynamic)
     }
   }

@@ -31,6 +31,12 @@
     <v-toolbar app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Video World</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-flex xs2>
+        <v-text-field name="search" label="search" id="search" prepend-icon="search" clearable v-model="searchInput"
+                      @click:prepend="search()" :loading="loadingSearch" @keyup.enter="search">
+        </v-text-field>
+      </v-flex>
     </v-toolbar>
     <v-content>
       <router-view></router-view>
@@ -42,13 +48,34 @@
 </template>
 
 <script>
+import tmdbService from './services/tmdbService'
+
 export default {
   data: () => ({
-    drawer: false
+    drawer: false,
+    searchInput: '',
+    searchResults: [],
+    loadingSearch: false
   }),
   props: {
     source: String
-  }
+  },
+  methods: {
+    search: function () {
+      this.loadingSearch = true
+      tmdbService.searchTvShows(this.searchInput, 'en-us')
+        .then((response) => {
+          this.searchResults = response.data
+          this.loadingSearch = false
+          this.$router.push({ name: 'search', query: { q: this.searchInput } })
+          this.$forceUpdate()
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+
+    }
+  },
 };
 </script>
 
