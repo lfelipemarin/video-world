@@ -73,7 +73,7 @@
             <v-toolbar-title>{{modalTitle}}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn dark flat @click="dialog = false">Close</v-btn>
+              <v-btn dark flat @click="closeIframe()">Close</v-btn>
             </v-toolbar-items>
           </v-toolbar>
           <iframe id="media-iframe" height="100%" width="100%" :src="mediaLink" name="iframe_media"
@@ -142,7 +142,7 @@ export default {
       })
     },
     imagePath (posterPath) {
-      return posterPath ? config.imgApiConfig.baseUrl + 'original' + posterPath : ''
+      return posterPath ? config.imgApiConfig.baseUrl + 'w500' + posterPath : ''
     },
     showDescription (episode) {
       episode.show = !episode.show
