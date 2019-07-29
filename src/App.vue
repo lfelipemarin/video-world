@@ -32,7 +32,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Video World</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-flex xs4 sm6 md8>
+      <v-flex xs4 sm6 md4>
         <v-text-field name="search" label="search" id="search" prepend-icon="search" clearable v-model="searchInput"
                       @click:prepend="search()" :loading="loadingSearch" @keyup.enter="search">
         </v-text-field>
